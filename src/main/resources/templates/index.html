@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+
+<h1 id="info"> Połączenie zamknięte</h1>
+<h2 id="message"></h2>
+
+<form onsubmit="sendMessage(); return false;" action="#">
+    <input id="message_to_send" type="text">
+    <button type="submit">Send</button>
+
+</form>
+
+<script>
+
+    var webSocket = new WebSocket("ws://localhost:8080/chat");
+    webSocket.onopen = function (ev) {
+        console.log("Połączenie otwarte");
+        document.getElementById("info").innerHTML = "połączenie otwarte";
+
+        webSocket.send("test z html");
+    };
+
+    webSocket.onmessage = function (ev) {
+        var messages = document.getElementById("messages");
+        messages.innerHTML = messages.innerHTML + "<li>" + ev.data + "<li>";
+    };
+
+    function sendMessage() {
+        var message = document.getElementById("message_to_send").value;
+        webSocket.send(message);
+
+    }
+
+</script>
+</body>
+</html>
