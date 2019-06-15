@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +9,7 @@
 
 <center>
     <h1 id="info"> Connection closed</h1>
+   <h2 id="hello"></h2>
     <h5 id="message"></h5>
 
     <form onsubmit="sendMessage(); return false;" action="#">
@@ -22,14 +24,22 @@
     var webSocket = new WebSocket("ws://localhost:8080/chat");
     webSocket.onopen = function (ev) {
         console.log("Connection opened");
-        document.getElementById("info").innerHTML = "Connection opened";
+        document.getElementById("info").innerHTML
+            = "Connection opened";
+        document.getElementById("hello").innerHTML = "Hi user";
 
-        webSocket.send("test z html");
     };
 
     webSocket.onmessage = function (ev) {
         var messages = document.getElementById("message");
-        messages.innerHTML = messages.innerHTML + "<li>" + ev.data + "<li>";
+
+        if(ev.data.startsWith("<server>")){
+            messages.innerHTML = messages.innerHTML + "<li style='color: red'>" + ev.data.replace("<server>", "") + "</li>";
+            return;
+        }
+
+        messages.innerHTML = messages.innerHTML
+            + "<li>" + ev.data + "<li>";
     };
 
     function sendMessage() {

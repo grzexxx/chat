@@ -10,6 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 
+import javax.websocket.Session;
 import java.time.LocalDateTime;
 
 import java.time.format.DateTimeFormatter;
@@ -32,9 +33,21 @@ public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigu
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("SB connected.");
         sessions.add(session);
+        sendWelcomeMessage(session);
     }
+
+    private void sendWelcomeMessage(WebSocketSession session) throws Exception {
+        for (WebSocketSession session1 : sessions) {
+            if (!(session1.getId().equals(session.getId()))) {
+
+                TextMessage textMessage = new TextMessage("<server>SB connected to the chat");
+                session1.sendMessage(textMessage);
+            }
+        }
+    }
+
+
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -52,10 +65,23 @@ public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigu
         // session.sendMessage(message);
     }
 
+
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println("SB leave.");
+       // System.out.println("<server>SB leave.");
+        sendDisconnectMessage(session);
         sessions.remove(session);
+    }
+
+    private void sendDisconnectMessage(WebSocketSession session) throws Exception {
+
+        for (WebSocketSession session1 : sessions) {
+            if (!(session1.getId().equals(session.getId()))) {
+
+                TextMessage textMessage = new TextMessage("<server>SB leave our chat");
+                session1.sendMessage(textMessage);
+            }
+        }
     }
 
 }
