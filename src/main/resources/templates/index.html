@@ -26,7 +26,7 @@
     };
 
     webSocket.onmessage = function (ev) {
-        var messages = document.getElementById("messages");
+        var messages = document.getElementById("message");
         messages.innerHTML = messages.innerHTML + "<li>" + ev.data + "<li>";
     };
 
