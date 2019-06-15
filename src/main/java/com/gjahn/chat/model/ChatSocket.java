@@ -9,6 +9,10 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+
+import java.time.LocalDateTime;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +21,10 @@ import java.util.List;
 public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigurer {
 
     private List<WebSocketSession> sessions = new ArrayList<>();
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH mm");
 
     @Override
+
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
         webSocketHandlerRegistry.addHandler(this, "/chat").setAllowedOrigins("*");
 
@@ -34,7 +40,13 @@ public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigu
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
         for (WebSocketSession webSocketSession : sessions) {
-            webSocketSession.sendMessage(message);
+
+            TextMessage textMessage = new TextMessage("( "
+                    + formatter.format(LocalDateTime.now())
+                    + " ): " + message.getPayload()
+            );
+
+            webSocketSession.sendMessage(textMessage);
         }
         //   System.out.println("Message: " + message.getPayload());
         // session.sendMessage(message);
