@@ -20,6 +20,7 @@ import java.util.List;
 public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigurer {
 
     // private List<WebSocketSession> sessions = new ArrayList<>();
+    //s
     private List<User> users = new ArrayList<>();
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH mm");
 
